@@ -1,42 +1,53 @@
 import React, { Component } from "react";
-
-export class Comment extends Component {
-  state = {
-    open: true
-  };
-
-  toggle = () => {
-    this.setState({
-      open: !this.state.open
-    }, () => console.log(this.state))
-  }
-
-  render() {
-    if (this.state.open === false) {
-      return (
-        <div className="comment">
-          <button onClick={this.toggle}>Mostrar comentário</button>
-        </div>
-      );
-    }
-
-    return (
-      <div className="comment">
-        <button onClick={this.toggle}>Ocultar comentário</button>
-        <p className="comment_user">{this.props.user}</p>
-        <p className="comment_body">{this.props.body}</p>
-      </div>
-    );
-  }
-}
+import Comment from "./Comment";
+import CommentBox from "./CommentBox";
 
 export default class Comments extends Component {
+  state = {
+    comments: []
+  };
+
+  componentDidMount() {
+    fetch("https://jsonplaceholder.typicode.com/posts/1/comments").then(
+      response => {
+        response.json().then(data => {
+          this.setState({
+            comments: data
+          });
+        });
+      }
+    );
+  }
+
+  insertComment = comment => {
+    const { comments } = this.state
+
+    const newComments = [{
+      body: comment.body,
+      name: comment.name,
+      id: comments.length + 1
+    }, ...comments]
+
+    this.setState({
+      comments: newComments
+    })
+  }
+
   render() {
     return (
       <div className="comments">
-        <Comment user="João" body="Que matéria legal!" />
-        <Comment user="Maria" body="Que matéria chata" />
-        <Comment user="José" body="Concordo com tudo" />
+        <CommentBox insertComment={this.insertComment} />
+        {this.state.comments.map(comment => {
+          return (
+            <Comment key={comment.id} user={comment.name}>
+              {comment.body.split("\n").map((block, index) => {
+                return (
+                  <p key={index}>{block}</p>
+                )
+              })}
+            </Comment>
+          );
+        })}
       </div>
     );
   }

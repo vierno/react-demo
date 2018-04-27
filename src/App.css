@@ -67,3 +67,19 @@
   color: #8e0000;
   text-decoration: none;
 }
+
+.new_comment label {
+  display: block;
+  font-weight: bold;
+}
+
+.new_comment input,
+.new_comment textarea {
+  margin: 10px 0;
+}
+
+.comment_box {
+  font-size: 14px;
+  height: 50px;
+  width: 100%;
+}
